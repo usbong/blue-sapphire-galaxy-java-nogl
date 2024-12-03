@@ -15,7 +15,7 @@
  * @company: Usbong
  * @author: SYSON, MICHAEL B.
  * @date created: 20240522
- * @last updated: 20241203; from 20241020
+ * @last updated: 20241204; from 20241203
  * @website: www.usbong.ph
  *
  */
@@ -39,6 +39,8 @@
 
  2) https://github.com/usbong/game-off-2023; last accessed: 20240623
 */
+
+import com.codedisaster.steamworks.*;
 
 import javax.swing.SwingUtilities;
 import javax.swing.JFrame;
@@ -110,23 +112,38 @@ public class UsbongMain {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-				//initSteamAPI(); //TODO: -reverify: this
+				initSteamAPI(); //TODO: -reverify: this
 				
                 createAndShowGUI();
             }
         });
     }
 	
-	//note: .jar not available for download today (20241203)	//https://oss.sonatype.org/content/repositories/snapshots/com/code-disaster/steamworks4j/steamworks4j/1.7.1-SNAPSHOT/; 
+	//note: .jar not available for download today (20241203)	
+	//1) https://oss.sonatype.org/content/repositories/snapshots/com/code-disaster/steamworks4j/steamworks4j/1.7.1-SNAPSHOT/; 
 	//last accessed: 20241203; from 20240815
 	//Repository where steamworks4j-1.7.1-20180428.093430-2.jar can be downloaded
-/*	
+	
+	//2) https://github.com/code-disaster/steamworks4j/blob/master/tests/src/main/java/com/codedisaster/steamworks/test/SteamTestApp.java;
+	//last accessed: 20241204
     private static void initSteamAPI() {
-		SteamAPI.loadLibraries();
-		SteamAPI.restartAppIfNecessary();
-		SteamAPI.init();
+		try {
+			SteamAPI.loadLibraries();
+
+	/*		
+			//SteamAPI.restartAppIfNecessary();
+			// doesn't make much sense here, as normally you would call this before
+			// SteamAPI.init() with your (kn)own app ID
+			if (SteamAPI.restartAppIfNecessary(clientUtils.getAppID())) {
+				System.out.println("SteamAPI_RestartAppIfNecessary returned 'false'");
+			}		
+	*/			
+			SteamAPI.init();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}		
 	}
-*/
 
     private static void createAndShowGUI() {
         //System.out.println("Created GUI on EDT? "+
