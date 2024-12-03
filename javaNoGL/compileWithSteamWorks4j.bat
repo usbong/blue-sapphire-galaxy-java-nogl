@@ -11,7 +11,7 @@ REM
 REM @company: USBONG
 REM @author: SYSON, MICHAEL B.
 REM @date created: 20240719
-REM @date updated: 20240815; from 20240726
+REM @date updated: 20241204; from 20240815
 REM
 REM Note: faster to put necessary files inside "src" folder to solve location errors
 REM go to ./src
@@ -38,4 +38,6 @@ REM
 
 REM javac "./src/"*.java
 
-javac -cp ".;steamworks4j-1.7.1-20180428.093430-2.jar" "./src/"*.java
+REM javac -cp ".;steamworks4j-1.7.1-20180428.093430-2.jar" "./src/"*.java
+
+javac -cp "./lib/steamworks4j-1.7.1-20180428.093430-2.jar" "./src/"*.java
