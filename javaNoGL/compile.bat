@@ -11,7 +11,7 @@ REM
 REM @company: USBONG
 REM @author: SYSON, MICHAEL B.
 REM @date created: 20240719
-REM @date updated: 20240726; from 20240725
+REM @date updated: 20241204; from 20240726
 REM
 REM Note: faster to put necessary files inside "src" folder to solve location errors
 REM go to ./src
@@ -20,3 +20,9 @@ REM OK; but jinput uses the later JDK version 17
 REM
 
 javac "./src/"*.java
+
+REM error;
+REM javac @options.txt @classes.txt
+
+REM javac -cp ./src/; UsbongMain.java, UsbongUtils.java, UsbongText.java, UsbongFont.java, UsbongFontNumber.java, MyPanel$1.java, MyPanel$2.java, MyPanel$3.java, Level2D.java, BackgroundCanvas.java, Actor.java, Wall.java, EnemyAircraft.java, RobotShip.java, Plasma.java, RedSquare.java
+

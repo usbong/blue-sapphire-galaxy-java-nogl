@@ -39,5 +39,6 @@ REM
 REM javac "./src/"*.java
 
 REM javac -cp ".;steamworks4j-1.7.1-20180428.093430-2.jar" "./src/"*.java
+REM javac -cp "./lib/steamworks4j-1.7.1-20180428.093430-2.jar" "./src/"*.java
 
-javac -cp "./lib/steamworks4j-1.7.1-20180428.093430-2.jar" "./src/"*.java
+javac -cp "./lib/steamworks4j-1.7.1-20180428.093430-2.jar" "./srcWithSteamWorks4j/"*.java "./src/"*.java

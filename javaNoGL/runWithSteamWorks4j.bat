@@ -25,4 +25,4 @@ REM java -classpath "./src" UsbongMain
 
 REM java -cp "./src;steamworks4j-1.7.1-20180428.093430-2.jar" "UsbongMain"
 
-java -cp "./src/;./lib/steamworks4j-1.7.1-20180428.093430-2.jar" "UsbongMain"
+java -cp "./src/;./srcWithSteamWorks4j;./lib/steamworks4j-1.7.1-20180428.093430-2.jar" "UsbongMainWithSteamWorks4j"
