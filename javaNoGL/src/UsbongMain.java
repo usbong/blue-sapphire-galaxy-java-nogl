@@ -15,7 +15,7 @@
  * @company: Usbong
  * @author: SYSON, MICHAEL B.
  * @date created: 20240522
- * @last updated: 20241204; from 20241203
+ * @last updated: 20241209; from 20241204
  * @website: www.usbong.ph
  *
  */
@@ -667,6 +667,13 @@ class Actor {
 	
 	//added by Mike, 20240809
 	protected boolean bIsWallTypeHit=false;
+	
+	protected int iHeroAnimationCount=-1; //0; //due to immediately +1 in execution;
+	protected int iHeroAnimationCountMax=5;
+	protected int iHeroAnimationDelayCount=0;
+	protected int iHeroAnimationDelayCountMax=5;
+	protected boolean bIsHeroInRiver=false;
+	protected boolean bIsHeroFacingLeft=false;
 
     public Actor(int iOffsetScreenWidthLeftMargin, int iOffsetScreenHeightTopMargin, int iStageWidth, int iStageHeight, int iTileWidth, int iTileHeight) {
 	  try {
@@ -1393,7 +1400,7 @@ class RobotShip extends Actor {
 	  super(iOffsetScreenWidthLeftMargin, iOffsetScreenHeightTopMargin, iStageWidth, iStageHeight, iTileWidth, iTileHeight);
 
 	  try {
-		  myBufferedImage = ImageIO.read(new File("./res/robotship.png"));
+		  myBufferedImage = ImageIO.read(new File("./res/inputImage512x512.png")); //robotship.png
       } catch (IOException ex) {
       }
 	}
@@ -1632,38 +1639,9 @@ class RobotShip extends Actor {
 	//edited by Mike, 20240811
 	trans.scale((iTileWidth*1.0)/iFrameWidth,(iTileHeight*1.0)/iFrameHeight);
 
-	//added by Mike, 20240714
-	//put this after scale;
-
-/*	//note effect; noticeable lag;
-	//reference: https://stackoverflow.com/questions/4248104/applying-a-tint-to-an-image-in-java; last accessed: 20240926
-	
-	for (int x = 0; x < myBufferedImage.getWidth(); x++) {
-        for (int y = 0; y < myBufferedImage.getHeight(); y++) {
-
-            //Color color = new Color(myBufferedImage.getRGB(x, y));
-            Color color = new Color(myBufferedImage.getRGB(x, y));
-
-			//reference: https://stackoverflow.com/questions/8978228/java-bufferedimage-how-to-know-if-a-pixel-is-transparent; last accessed: 20240926
-			int pixel = myBufferedImage.getRGB(x,y);
-			//transparent
-			if( (pixel>>24) == 0x00 ) {
-		      continue;
-			}
-			
-            // do something with the color :) (change the hue, saturation and/or brightness)
-            // float[] hsb = new float[3];
-            // Color.RGBtoHSB(color.getRed(), old.getGreen(), old.getBlue(), hsb);
-
-            // or just call brighter to just tint it
-            Color brighter = color.brighter();
-
-            myBufferedImage.setRGB(x, y, brighter.getRGB());
-       }
-    }		
-*/	
 	iFrameCount=0;//1;
 
+/*
 	if (bIsChangingDirection) {		
 		iFrameCount=1;
 		//bIsChangingDirection=false;
@@ -1678,8 +1656,62 @@ class RobotShip extends Actor {
 			iFrameCount=3;
 		}		
 	}
-	
-	
+		
+*/
+		if (iHeroAnimationDelayCount==iHeroAnimationDelayCountMax) {
+			iHeroAnimationCount=(iHeroAnimationCount+1)%3; //last hidden
+
+			iHeroAnimationDelayCount=0;
+		}
+		else {
+			iHeroAnimationDelayCount++;
+		}
+
+		int iFrameY=0;
+		int iFrameXOffset=0;
+				
+		if (bIsHeroInRiver){
+			if (bIsHeroFacingLeft) {
+				iFrameY=iFrameHeight*0;
+			}
+			else {
+				iFrameY=iFrameHeight*1;
+			}
+			
+			iFrameXOffset=iFrameWidth;
+		}
+		else {
+			if (bIsHeroFacingLeft) {
+				iFrameY=iFrameHeight*2;//64*2; 128;
+			}
+			else {
+				iFrameY=iFrameHeight*3;//64*3; 192;
+			}
+		}			
+
+		if (iHeroAnimationCount==0) { 
+			//mainImageTileHeroBody.style.objectPosition = "-" + 0-iFrameXOffset + "px -" + iFrameY + "px";
+			
+			trans.translate(0-iFrameXOffset*iFrameWidth,0-iFrameY);					
+			g2d.setTransform(trans);
+			rect.setRect(0+iFrameXOffset*iFrameWidth,0+iFrameY, iFrameWidth,iFrameHeight);	
+		}
+		else if (iHeroAnimationCount==1) { 
+			//mainImageTileHeroBody.style.objectPosition = "-" + iFrameXOffset-iImageFrameWidth + "px -" + iFrameY + "px";
+
+			trans.translate(0-iFrameXOffset*iFrameWidth-iFrameWidth,0-iFrameY);
+			g2d.setTransform(trans);
+			rect.setRect(0+iFrameXOffset*iFrameWidth+iFrameWidth,0+iFrameY, iFrameWidth,iFrameHeight);	
+		}
+		else {
+			//mainImageTileHeroBody.style.objectPosition = "-" + iFrameXOffset-iImageFrameWidth*2 + "px -" + iFrameY + "px";
+
+			trans.translate(0-iFrameXOffset*iFrameWidth-iFrameWidth*2,0-iFrameY);
+			g2d.setTransform(trans);
+			rect.setRect(0+iFrameXOffset*iFrameWidth+iFrameWidth*2,0+iFrameY, iFrameWidth,iFrameHeight);	
+		}
+
+/*	
 	if (currentFacingState==FACING_RIGHT) {
 		//trans.translate(getX(),getY());
 		trans.translate(0-(iFrameCount)*iFrameWidth,0);			
@@ -1703,6 +1735,7 @@ class RobotShip extends Actor {
 	   //rect.setRect(0, 0+iFrameHeight, iFrameWidth, iFrameHeight);
 	   rect.setRect(0+(iFrameCount)*iFrameWidth, 0+iFrameHeight, iFrameWidth,iFrameHeight);	   
 	}
+*/	
 
 	Area myClipArea = new Area(rect);
 
