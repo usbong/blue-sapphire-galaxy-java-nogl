@@ -3754,21 +3754,19 @@ class Level2D extends Actor {
 	private int iPlasmaChargeMax=200;//100;
 	private boolean bIsPlasmaChargeReleased=true;
 
-	//added by Mike, 20240809
-	BackgroundCanvas myBackgroundCanvas;
+	private BackgroundCanvas myBackgroundCanvas;
 
-	//added by Mike, 20240810
-	RobotShip myRobotShip;
+	private RobotShip myRobotShip;
 
-	//added by Mike, 20240907
-	UsbongText myUsbongText;
+	private UsbongText myUsbongText;
 	
 	//added by Mike, 20240908
 	//UsbongFont myUsbongFont;
 
-	//added by Mike, 20240905
-	boolean bIsMaxedMonitorHeight;
-	int iScreenWidth;
+	private boolean bIsMaxedMonitorHeight;
+	private int iScreenWidth;
+	
+	private boolean bIsMissionDone;
 
 	//edited by Mike, 20240905
     //public Level2D(int iOffsetScreenWidthLeftMargin, int iOffsetScreenHeightTopMargin, int iStageWidth, int iStageHeight, int iTileWidth, int iTileHeight) {
@@ -3912,6 +3910,188 @@ class Level2D extends Actor {
 		bHasPressedFiring=false;
 	}
 
+
+	
+	public void processBossBattleResultFromInput(int iXPos, int iYPos) {		
+/*		
+	bHasFiredTemp = bHasFired;
+	
+	//note: resets also bHasFired;
+	resetProjectile();
+	
+	if (bIsActionKeyPressed) {
+		if (iCurrHeroMana!=iCurrHeroManaMax) {	//if no mana
+			return;	
+		}
+	}
+		
+	
+	if (isPointsOfRectIntersectingPointsOfRect(iXPos,iYPos, parseInt(mainImageTileHeroBody.style.left),parseInt(mainImageTileHeroBody.style.top))) {
+		//alert("HIT!");
+		//no change
+		//if ((bHasReachedDestinationX) && (bHasReachedDestinationY)) {
+			if ((iXPos==iPrevMouseXPos) && (iYPos==iPrevMouseYPos)) {	
+				//TODO: -add: hit wall animation;
+				return;
+			}
+		//}	
+	}	
+
+	//added by Mike, 20241104
+	if (isPointsOfRectIntersectingPointsOfRect(iXPos,iYPos, iPrevMouseXPos,iPrevMouseYPos)) {
+		//TODO: -add: hit wall animation;
+		//return;
+		
+		//do this only if at the borders of the inner stage
+	
+		//INNER STAGE; MAX
+		//iHorizontalOffset=(640-iStageMaxHeight)/2;
+		//var iInnerHorizontalOffset=(640-iStageMaxHeight)/2;
+		var iInnerVerticalOffset=iImageFrameHeight/2;
+
+		//reminder: innerStageWidth uses iStageMaxHeight
+	
+		if (mainImageTilePosX+iImageFrameWidth>=iInnerHorizontalOffset+iStageMaxHeight) {
+			return;
+		}
+		else if (mainImageTilePosX<=0+iInnerHorizontalOffset) {
+			return;
+		}		
+		
+		if (mainImageTilePosY+iImageFrameHeight>=0+iStageMaxHeight-iInnerVerticalOffset) {
+			return;
+		}
+		else if (mainImageTilePosY<=0) {
+			return;
+		}	
+	}
+
+	//--------------------------------
+	bIsHeroDash=false;
+	//bHasHeroShotFireball=false;
+
+	if ((!bIsHeroInRiver) || (bHasObtainedAmuletAtRoom32)){
+		if ((Date.now()-iMouseClickStartTime)<=iMouseClickMaxElapsedTime) {
+			//alert(Date.now()-iMouseClickStartTime);
+			bIsHeroDash=true;
+		}			
+	}
+	
+	iMouseClickStartTime=Date.now(); //in milliseconds
+	//--------------------------------
+
+	iPrevMouseXPos=iXPos;
+	iPrevMouseYPos=iYPos;
+	
+	//resetProjectile() sets bHasFired to false;
+	//if (!bHasFired) {
+	//becomes DASH attack;
+	if (bHasFiredTemp) {
+			//quick double mouse click; within 1/4 second
+			if (bIsHeroDash) {
+				mainImageTileProjectileStepY=mainImageTileProjectileStepYMax;
+				mainImageTileProjectileStepX=mainImageTileProjectileStepXMax;
+			}
+	}
+	else {
+		mainImageTileProjectileStepY=mainImageTileProjectileVelocityY;
+		mainImageTileProjectileStepX=mainImageTileProjectileVelocityX;
+	}
+	
+    //reference: https://stackoverflow.com/questions/15994194/how-to-convert-x-y-coordinates-to-an-angle; last accessed: 20230428;
+    //--> answer by: Mohsen, 20130413T2357; from 20150322T2246;
+
+    //start position @center
+    //note: subtract margine offset
+	var iDeltaX=(iXPos-iHorizontalOffset)-(mainImageTilePosX+iImageFrameWidth/2);
+	var iDeltaY=(iYPos-iVerticalOffset)-(mainImageTilePosY+iImageFrameHeight/2);
+	
+    //alert("iXPos: "+iXPos);
+
+    iDeltaY*=-1;
+
+    var fMainImageTileStepAngleRad=Math.atan2(iDeltaX,iDeltaY);
+
+    iMainImageTileStepAngle=fMainImageTileStepAngleRad*(180/Math.PI);
+
+    //clockwise
+    iMainImageTileStepAngle=(iMainImageTileStepAngle)%360;    
+    mainImageTile.style.transform = "rotate("+ (iMainImageTileStepAngle % 360) +"deg)";
+
+	newMainImageTileProjectilePosY=mainImageTileProjectileStepY*Math.cos(fMainImageTileStepAngleRad).toFixed(3);
+
+	newMainImageTileProjectilePosY*=-1;
+	newMainImageTileProjectilePosX=mainImageTileProjectileStepX*Math.sin(fMainImageTileStepAngleRad).toFixed(3);
+
+	//added by Mike, 20231125
+	mainImageTileProjectilePosX = mainImageTile.style.left;
+	mainImageTileProjectilePosY = mainImageTile.style.top;
+
+	//added by Mike, 20241103
+	mainImageTileProjectileStepDestinationX=iXPos;//iDeltaX;//newMainImageTileProjectilePosX;//.iDeltaX;
+	mainImageTileProjectileStepDestinationY=iYPos;//iDeltaY;//newMainImageTileProjectilePosY;//iDeltaY;
+
+
+	if (bIsActionKeyPressed) {
+			if (!bHasHeroShotFireball) {
+				//part of command to create fireball
+				//mainImageTileProjectilePosY=mainImageTilePosY;
+				//mainImageTileProjectilePosX=mainImageTilePosX;
+
+				resetProjectile();			
+				iMouseClickStartTime=iMouseClickMaxElapsedTime+1;	
+				bHasHeroShotFireball=true;		
+				
+				iCurrHeroMana=0;//set to empty
+			
+				newMainImageTileFireballProjectilePosY=mainImageTileFireballProjectileStepY*Math.cos(fMainImageTileStepAngleRad).toFixed(3);
+
+				newMainImageTileFireballProjectilePosY*=-1;
+				newMainImageTileFireballProjectilePosX=mainImageTileFireballProjectileStepX*Math.sin(fMainImageTileStepAngleRad).toFixed(3);
+
+				mainImageTileFireballProjectilePosX = mainImageTile.style.left;
+				mainImageTileFireballProjectilePosY = mainImageTile.style.top;
+
+				mainImageTileFireballProjectileStepDestinationX=iXPos;
+				mainImageTileFireballProjectileStepDestinationY=iYPos;
+				
+				setInitFireballEffectPosition(mainImageTilePosX,mainImageTilePosY);
+				//AI; movement due to river
+			}
+	}
+	
+	
+	bHasFired=true;
+	
+	//added by Mike, 20241104
+	//start at second frame; due to at present, no idle animation yet;
+	//need to also display movement in animation;
+	iHeroAnimationCount=1;
+					
+	if (iDeltaX<0) {
+		bIsHeroFacingLeft=true;
+	}
+	else if (iDeltaX>0) {
+		bIsHeroFacingLeft=false;
+	}
+	else {
+		//bIsHeroFacingLeft=false;
+	}					
+				
+	//added by Mike, 20241105
+	setDustEffectPosition(mainImageTilePosX,mainImageTilePosY);
+		
+		
+	setHeroAttackEffectPosition(mainImageTileProjectileStepDestinationX-iImageFrameWidthDefault/2,mainImageTileProjectileStepDestinationY-iImageFrameHeightDefault/2);
+*/
+   }  
+
+	public void processResultFromInput(int iXPos, int iYPos) {
+      if (!bIsMissionDone) {
+        processBossBattleResultFromInput(iXPos, iYPos);
+      }
+	}
+
 	//added by Mike, 20240825
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -3923,8 +4103,11 @@ class Level2D extends Actor {
 
 		//added by Mike, 20240831
 		iMouseXPos=e.getX();
-		iMouseYPos=e.getY();
+		iMouseXPos=e.getY();
 		
+		processResultFromInput(iMouseXPos, iMouseXPos);
+
+/*		
 		//added by Mike, 20241016
 		if (!myRobotShip.isActive()) {
 			return;
@@ -3934,58 +4117,12 @@ class Level2D extends Actor {
 			return;
 		}
 		
-/*
-		for (int i=0; i<MAX_PLASMA_COUNT; i++) {
-			  if (!myPlasmaContainer[i].isActive()) {
-				myPlasmaContainer[i].processMouseInput(iMouseXPos, iMouseYPos, myRobotShip.getX(),myRobotShip.getY());
-				
-				//removed by Mike, 20240927
-				//bIsFiring=true;
-	
-				break;
-			  }
-		}
-*/		
-		//only 1 Boss; red aircraft; smarter AI
-		for (int i=0; i<MAX_ENEMY_AIRCRAFT_BOSS_COUNT; i++) {	
-			//Boss
-			if (myEnemyAircraftBossContainer[i].isActive()) {
-				for (int k=0; k<MAX_ENEMY_PLASMA_COUNT; k++) {					
-					if (!myEnemyPlasmaContainer[k].isActive()) {
-						//TODO: -update: this to include if hero robot ship is at right-most of map; reminder wrap around
-						myEnemyPlasmaContainer[k].processMouseInputForEnemy(this.getX()+iViewPortWidth/2,myRobotShip.getY(), myEnemyAircraftBossContainer[i].getX(),myEnemyAircraftBossContainer[i].getY());
-				
-/*						
-						myEnemyPlasmaContainer[k].setX(myEnemyAircraftBossContainer[i].getX());
-						
-						myEnemyPlasmaContainer[k].setY(myEnemyAircraftBossContainer[i].getY());
-
-						myEnemyPlasmaContainer[k].setCurrentState(ACTIVE_STATE);
-						myEnemyPlasmaContainer[k].setCollidable(true);		
-						
-*/
-/*						
-System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PLASMA!");				
-
-System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> myEnemyAircraftBossContainer[i].getX(): "+myEnemyAircraftBossContainer[i].getX());				
-System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> myEnemyAircraftBossContainer[i].getY(): "+myEnemyAircraftBossContainer[i].getY());				
-System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> myRobotShip.getX(): "+myRobotShip.getX());				
-System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> myRobotShip.getY(): "+myRobotShip.getY());			
-
-System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> myEnemyPlasmaContainer[k].getX(): "+myEnemyPlasmaContainer[k].getX());				
-System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> myEnemyPlasmaContainer[k].getY(): "+myEnemyPlasmaContainer[k].getY());				
-*/						
-						break;
-					  }
-				}
-			}
-		}
-
 		bIsFiring=false;
 		bHasPressedFiring=true;
 
 		//bIsFiring=true;
 		bIsPlasmaChargeReleased=false;
+*/		
 	}
 
 	//added by Mike, 20240830
