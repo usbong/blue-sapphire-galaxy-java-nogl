@@ -15,7 +15,7 @@
  * @company: Usbong
  * @author: SYSON, MICHAEL B.
  * @date created: 20240522
- * @last updated: 20241209; from 20241204
+ * @last updated: 20241211; from 20241209
  * @website: www.usbong.ph
  *
  */
@@ -564,6 +564,18 @@ class Actor {
 	//edited by Mike, 20240816
 	protected final int ISTEP_X_MAX=3;//2;
 	protected final int ISTEP_Y_MAX=3;//2;
+		
+	protected int iPrevMouseXPos=0;
+	protected int iPrevMouseYPos=0;
+	protected int iActorTargetPosX=0;
+	protected int iActorTargetPosY=0;
+	protected int iNewActorTargetPosX=0;
+	protected int iNewActorTargetPosY=0;
+	protected int iActorStepDestinationX=0;
+	protected int iActorStepDestinationY=0;
+	
+	protected boolean bHasReachedDestinationY=false;
+	protected boolean bHasReachedDestinationX=false;
 
 	//added by Mike, 20240629
 	protected final int KEY_W=0; //same as key UP
@@ -674,6 +686,7 @@ class Actor {
 	protected int iHeroAnimationDelayCountMax=5;
 	protected boolean bIsHeroInRiver=false;
 	protected boolean bIsHeroFacingLeft=false;
+	protected boolean bHasFired=false;
 
     public Actor(int iOffsetScreenWidthLeftMargin, int iOffsetScreenHeightTopMargin, int iStageWidth, int iStageHeight, int iTileWidth, int iTileHeight) {
 	  try {
@@ -1396,6 +1409,9 @@ class Actor {
 //added by Mike, 20240622
 class RobotShip extends Actor {
 
+	protected final int ISTEP_X_HERO=2;
+	protected final int ISTEP_Y_HERO=2;
+
     public RobotShip(int iOffsetScreenWidthLeftMargin, int iOffsetScreenHeightTopMargin, int iStageWidth, int iStageHeight, int iTileWidth, int iTileHeight) {
 	  super(iOffsetScreenWidthLeftMargin, iOffsetScreenHeightTopMargin, iStageWidth, iStageHeight, iTileWidth, iTileHeight);
 
@@ -1441,10 +1457,70 @@ class RobotShip extends Actor {
 		myTileType=TILE_HERO;
 	}
 
+	public void resetProjectile() {
+		bHasFired=false;	
+		
+		bHasReachedDestinationY=false;
+		bHasReachedDestinationX=false;
+	}
+
 	@Override
 	public void update() {
 		//setX(getX()+getStepX());
+/*		
+		setX(getX()+getStepX());
+		setY(getY()+getStepY());
+*/
+		//movement
+		if (bHasFired) {		
+			//System.out.println("iActorTargetPosX: "+iActorTargetPosX);
+			//System.out.println("iActorTargetPosY: "+iActorTargetPosY);
 
+			iActorTargetPosX+=iNewActorTargetPosX;
+			iActorTargetPosY+=iNewActorTargetPosY;
+			
+			//System.out.println(">>>iActorTargetPosX: "+iActorTargetPosX);
+			//System.out.println(">>>iActorTargetPosY: "+iActorTargetPosY);
+			
+/*		
+			setX(iActorTargetPosX);
+			setY(iActorTargetPosY);
+*/
+			
+/*			
+			System.out.println("iNewActorTargetPosX: "+iNewActorTargetPosX);
+			System.out.println("iNewActorTargetPosY: "+iNewActorTargetPosY);
+*/
+			
+			//mainImageTileProjectile.style.left = mainImageTileProjectilePosX+"px";
+			//mainImageTileProjectile.style.top = mainImageTileProjectilePosY+"px";
+/*			
+			if (bHasHeroShotFireball) {
+			}
+			else {			
+*/			
+				if ((getX()==iActorTargetPosX) && (getY()==iActorTargetPosY)) {
+					//TODO: -add: this
+					resetProjectile();
+					return;
+				}
+
+				//setX(getX()+getStepX());
+				//setY(getY()+getStepY());
+		
+				setX(iActorTargetPosX);		
+				setY(iActorTargetPosY);		
+/*				
+			}
+*/			
+
+				if ((getX()==iActorStepDestinationX) && (getY()==iActorStepDestinationY)) {
+					resetProjectile();
+					return;
+				}
+		}
+		
+		
 		if (myKeysDown[KEY_A])
 		{			
 			//edited by Mike, 20240924	
@@ -1563,6 +1639,88 @@ class RobotShip extends Actor {
 
 		return;
 	}
+	
+	//reference: Usbong Game Off 2023
+	//public void processMouseInput(MouseEvent e, int iHeroX, int iHeroY) {
+	public void processMouseInput(int iMouseXPos, int iMouseYPos) {
+/*
+		//if hidden, i.e. not available, for use;
+		//if (getCurrentState()!=HIDDEN_STATE) {
+		if (getCurrentState()==ACTIVE_STATE) {
+			return;
+		}
+
+		setCurrentState(ACTIVE_STATE);
+		//added by Mike, 20240828
+		setCollidable(true);
+		
+		this.setX(iHeroX);
+		this.setY(iHeroY);
+
+		//added by Mike, 20240826
+		iXInitialDistanceTraveled=getX();
+		iYInitialDistanceTraveled=getY();
+
+		iXCurrentDistanceTraveled=0;
+		iYCurrentDistanceTraveled=0;
+*/
+		iPrevMouseXPos=iMouseXPos;
+		iPrevMouseYPos=iMouseYPos;		
+				
+//		System.out.println(">>>>>>>>>iMouseXPos: "+iMouseXPos);
+//		System.out.println(">>>>>>>>>iMouseYPos: "+iMouseYPos);
+		
+/*
+	    int iDeltaX=(e.getX())-(this.getX()+this.getWidth()/2);
+        int iDeltaY=(e.getY())-(this.getY()+this.getHeight()/2);
+*/
+
+	    int iDeltaX=(iMouseXPos)-(this.getX()+this.getWidth()/2);
+        int iDeltaY=(iMouseYPos)-(this.getY()+this.getHeight()/2);
+
+	    iDeltaY*=-1;
+
+	    double dMainImageTileStepAngleRad=Math.atan2(iDeltaX,iDeltaY);
+
+        int iMainImageTileStepAngle=(int)(dMainImageTileStepAngleRad*(180/Math.PI));
+
+	    //clockwise
+	    iMainImageTileStepAngle=(iMainImageTileStepAngle)%360;
+
+	    //System.out.println(">>>>>>>>>iMainImageTileStepAngle: "+iMainImageTileStepAngle);
+/*
+	    iStepY=(int)(ISTEP_Y_PLASMA*Math.cos(dMainImageTileStepAngleRad));
+	    iStepY*=-1;
+		
+        iStepX=(int)(ISTEP_X_PLASMA*Math.sin(dMainImageTileStepAngleRad));
+*/		
+		//added by Mike, 20241003
+		iRotationDegrees=iMainImageTileStepAngle;
+		
+		//clockwise
+		//mainImageTile.style.transform = "rotate("+ (iMainImageTileStepAngle % 360) +"deg)";
+
+		//newMainImageTileProjectilePosY=mainImageTileProjectileStepY*Math.cos(fMainImageTileStepAngleRad).toFixed(3);
+		//newMainImageTileProjectilePosY*=-1;
+		
+		iNewActorTargetPosY=(int)(ISTEP_Y_HERO*Math.cos(dMainImageTileStepAngleRad));
+	    iNewActorTargetPosY*=-1;
+		
+		
+		//newMainImageTileProjectilePosX=mainImageTileProjectileStepX*Math.sin(fMainImageTileStepAngleRad).toFixed(3);
+		iNewActorTargetPosX=(int)(ISTEP_X_HERO*Math.sin(dMainImageTileStepAngleRad));
+
+		iActorTargetPosX = this.getX();//mainImageTile.style.left;
+		iActorTargetPosY = this.getY();//mainImageTile.style.top;
+
+		iActorStepDestinationX=iMouseXPos;
+		iActorStepDestinationY=iMouseYPos;
+		
+		bHasFired=true;
+		
+		//System.out.println("iNewActorTargetPosY: "+iNewActorTargetPosY);
+	}
+	
 
 	//added by Mike, 20241016
 	@Override
@@ -4101,11 +4259,12 @@ class Level2D extends Actor {
 
 		  //myPlasmaContainer[0].processMouseInput(e, myRobotShip.getX(),myRobotShip.getY());
 
-		//added by Mike, 20240831
 		iMouseXPos=e.getX();
-		iMouseXPos=e.getY();
+		iMouseYPos=e.getY();
 		
-		processResultFromInput(iMouseXPos, iMouseXPos);
+		//processResultFromInput(iMouseXPos, iMouseXPos);
+		
+		myRobotShip.processMouseInput(iMouseXPos, iMouseYPos);
 
 /*		
 		//added by Mike, 20241016
@@ -4148,7 +4307,7 @@ class Level2D extends Actor {
 		return;
 	  }
 	  
-	  
+/*	  
 	  for (int i=0; i<MAX_PLASMA_COUNT; i++) {
 		  if (!myPlasmaContainer[i].isActive()) {
 			  
@@ -4167,7 +4326,7 @@ class Level2D extends Actor {
 			break;
 		}
 	  }		  	  
-	  
+*/	  
 
 /*
 	  //added by Mike, 20240927
@@ -4318,6 +4477,7 @@ class Level2D extends Actor {
 		
 		myRobotShip.synchronizeViewPort(iViewPortX,iViewPortY, getStepX(),getStepY());		
 		myRobotShip.synchronizeKeys(myKeysDown);
+		myRobotShip.update();
 			
 		//-----------------------------------------------------------
 
