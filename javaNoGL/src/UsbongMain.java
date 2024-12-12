@@ -15,7 +15,7 @@
  * @company: Usbong
  * @author: SYSON, MICHAEL B.
  * @date created: 20240522
- * @last updated: 20241212; from 20241211
+ * @last updated: 20241213; from 20241212
  * @website: www.usbong.ph
  *
  */
@@ -573,6 +573,20 @@ class Actor {
 	protected int iNewActorTargetPosY=0;
 	protected int iActorStepDestinationX=0;
 	protected int iActorStepDestinationY=0;
+	
+	//note: acceleration
+	//min 2; not 1
+	protected int iActorStepYMax=6;
+	protected int iActorStepXMax=6;
+
+	protected int iActorVelocityY=2;
+	protected int iActorVelocityX=2;
+
+	protected int iActorStepYMin=iActorVelocityY;
+	protected int iActorStepXMin=iActorVelocityX;
+
+	protected int iActorStepY=iActorStepYMin;
+	protected int iActorStepX=iActorStepXMin;	
 	
 	protected boolean bHasReachedDestinationY=false;
 	protected boolean bHasReachedDestinationX=false;
@@ -1455,6 +1469,11 @@ class RobotShip extends Actor {
 
 	protected final int ISTEP_X_HERO=2;
 	protected final int ISTEP_Y_HERO=2;
+	
+	private long lMouseClickStartTime=0;
+	private long lMouseClickMaxElapsedTime=250; //1/4 second
+	private boolean bIsHeroDash=false;
+	private boolean bHasHeroShotFireball=false;	
 
     public RobotShip(int iOffsetScreenWidthLeftMargin, int iOffsetScreenHeightTopMargin, int iStageWidth, int iStageHeight, int iTileWidth, int iTileHeight) {
 	  super(iOffsetScreenWidthLeftMargin, iOffsetScreenHeightTopMargin, iStageWidth, iStageHeight, iTileWidth, iTileHeight);
@@ -1866,8 +1885,48 @@ class RobotShip extends Actor {
 		}
 */
 
+		//--------------------------------
+		bIsHeroDash=false;
+		//bHasHeroShotFireball=false;
+		
+		System.out.println("System.currentTimeMillis(): "+System.currentTimeMillis());
+		System.out.println("lMouseClickStartTime: "+lMouseClickStartTime);
+		
+		
+	/*
+		if ((!bIsHeroInRiver) || (bHasObtainedAmuletAtRoom32)){
+	*/
+			//if ((Date.now()-iMouseClickStartTime)<=iMouseClickMaxElapsedTime) {
+			if ((System.currentTimeMillis()-lMouseClickStartTime)<=lMouseClickMaxElapsedTime) {
+				//alert(Date.now()-iMouseClickStartTime);
+				bIsHeroDash=true;				
+			}			
+	/*		
+		}
+	*/	
+		//note loss of precision; System.currentTimeMillis() uses long
+		//iMouseClickStartTime=(int)System.currentTimeMillis(); //in milliseconds
+		lMouseClickStartTime=System.currentTimeMillis(); //in milliseconds
+		
 		iPrevMouseXPos=iMouseXPos;
 		iPrevMouseYPos=iMouseYPos;		
+		
+		//becomes DASH attack;
+		if (bHasFiredTemp) {
+				//quick double mouse click; within 1/4 second
+				if (bIsHeroDash) {
+					iActorStepY=iActorStepYMax;
+					iActorStepX=iActorStepXMax;
+					
+					System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>DITO");
+				}
+		}
+		else {
+			iActorStepY=iActorVelocityY;
+			iActorStepX=iActorVelocityX;
+		}
+	
+	
 				
 //		System.out.println(">>>>>>>>>iMouseXPos: "+iMouseXPos);
 //		System.out.println(">>>>>>>>>iMouseYPos: "+iMouseYPos);
@@ -1909,10 +1968,13 @@ class RobotShip extends Actor {
 		//newMainImageTileProjectilePosY=mainImageTileProjectileStepY*Math.cos(fMainImageTileStepAngleRad).toFixed(3);
 		//newMainImageTileProjectilePosY*=-1;
 		
-		iNewActorTargetPosY=(int)(ISTEP_Y_HERO*Math.cos(dMainImageTileStepAngleRad));
+		//ISTEP_Y_HERO		
+		iNewActorTargetPosY=(int)(iActorStepY*Math.cos(dMainImageTileStepAngleRad));
 	    iNewActorTargetPosY*=-1;				
 		//newMainImageTileProjectilePosX=mainImageTileProjectileStepX*Math.sin(fMainImageTileStepAngleRad).toFixed(3);
-		iNewActorTargetPosX=(int)(ISTEP_X_HERO*Math.sin(dMainImageTileStepAngleRad));
+		
+		//ISTEP_X_HERO		
+		iNewActorTargetPosX=(int)(iActorStepX*Math.sin(dMainImageTileStepAngleRad));
 
 		iActorTargetPosX = this.getX();//mainImageTile.style.left;
 		iActorTargetPosY = this.getY();//mainImageTile.style.top;
@@ -4131,6 +4193,13 @@ class Level2D extends Actor {
 
 	private boolean bIsFiring=false;
 	private boolean bHasPressedFiring=false;
+
+/*	
+	private int iMouseClickStartTime=0;
+	private int iMouseClickMaxElapsedTime=250; //1/4 second
+	private boolean bIsHeroDash=false;
+	private boolean bHasHeroShotFireball=false;
+*/
 	
 	private int iFiringDelay=0;
 	private int iFiringDelayMax=300;
