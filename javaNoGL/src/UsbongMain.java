@@ -15,7 +15,7 @@
  * @company: Usbong
  * @author: SYSON, MICHAEL B.
  * @date created: 20240522
- * @last updated: 20241211; from 20241209
+ * @last updated: 20241212; from 20241211
  * @website: www.usbong.ph
  *
  */
@@ -687,6 +687,7 @@ class Actor {
 	protected boolean bIsHeroInRiver=false;
 	protected boolean bIsHeroFacingLeft=false;
 	protected boolean bHasFired=false;
+	protected boolean bHasFiredTemp=false;
 
     public Actor(int iOffsetScreenWidthLeftMargin, int iOffsetScreenHeightTopMargin, int iStageWidth, int iStageHeight, int iTileWidth, int iTileHeight) {
 	  try {
@@ -941,6 +942,49 @@ class Actor {
 		else {
 			iDifferenceInYPos=iDifferenceInYPos*(-1);
 		}
+	}
+	
+	
+    //@return bool
+	public boolean isPointsOfRectIntersectingPointsOfRect(int iXPos1, int iYPos1, int iXPos2, int iYPos2) {
+			//alert("iPuzzleTileWidth: "+iPuzzleTileWidth);
+
+		int mdo1XPos = iXPos1;
+		int mdo1YPos = iYPos1;
+
+		//edited by Mike, 20230524
+		//set as a point; not a tile
+		int mdo1Width = 1;//iPuzzleTileWidth;
+		int mdo1Height = 1;//iPuzzleTileHeight;
+
+		int mdo2XPos = iXPos2;
+		int mdo2YPos = iYPos2;
+
+		//TODO: -verify: this with LARGE
+
+		int mdo2Width = iFrameWidth; //iPuzzleTileWidth;
+		int mdo2Height = iFrameHeight; //iPuzzleTileHeight;
+
+		int iOffsetXPosAsPixel = 0;
+		int iOffsetYPosAsPixel = 0;
+
+		//alert("mdo1XPos: "+mdo1XPos);
+
+	  /*
+		alert("mdo1XPos: "+mdo1XPos+"; "+"mdo1Width: "+mdo1Width);
+		alert("mdo2XPos: "+mdo2XPos+"; "+"mdo2Width: "+mdo2Width);
+	  */
+
+		if ((mdo2YPos+mdo2Height < mdo1YPos+iOffsetYPosAsPixel) || //is the bottom of mdo2 above the top of mdo1?
+			(mdo2YPos > mdo1YPos+mdo1Height-iOffsetYPosAsPixel) || //is the top of mdo2 below the bottom of mdo1?
+			(mdo2XPos+mdo2Width < mdo1XPos+iOffsetXPosAsPixel) || //is the right of mdo2 to the left of mdo1?
+			(mdo2XPos > mdo1XPos+mdo1Width-iOffsetXPosAsPixel)) //is the left of mdo2 to the right of mdo1?
+		{
+			//no collision
+			return false;
+		}
+
+		return true;
 	}
 	
 	//added by Mike, 20240914
@@ -1457,11 +1501,42 @@ class RobotShip extends Actor {
 		myTileType=TILE_HERO;
 	}
 
-	public void resetProjectile() {
+	public void resetProjectile() {		
+		iActorTargetPosX = getX();
+		iActorTargetPosY = getY();
+
+		iNewActorTargetPosX=iActorTargetPosX;
+		iNewActorTargetPosY=iActorTargetPosY;
+				
 		bHasFired=false;	
 		
-		bHasReachedDestinationY=false;
+		//no idle animation yet;
+		iHeroAnimationCount=0;
+		
 		bHasReachedDestinationX=false;
+		bHasReachedDestinationY=false;
+
+/*		
+		if (bIsHeroInRiver) {
+			if (bIsHeroFacingLeft) {
+				iFrameY=iImageFrameHeight*0;//64*2; 128;
+			}
+			else {
+				iFrameY=iImageFrameHeight*1;//64*3; 192;
+			}
+		}
+		else {
+			if (bIsHeroFacingLeft) {
+				iFrameY=iImageFrameHeight*2;//64*2; 128;
+			}
+			else {
+				iFrameY=iImageFrameHeight*3;//64*3; 192;
+			}
+		}
+
+		mainImageTileHeroBody.style.visibility="visible";
+		mainImageTileHeroBody.style.objectPosition = "-" + 0 + "px -" + iFrameY + "px";
+*/			
 	}
 
 	@Override
@@ -1473,8 +1548,11 @@ class RobotShip extends Actor {
 */
 		//movement
 		if (bHasFired) {		
-			//System.out.println("iActorTargetPosX: "+iActorTargetPosX);
-			//System.out.println("iActorTargetPosY: "+iActorTargetPosY);
+			System.out.println("iActorTargetPosX: "+iActorTargetPosX);
+			System.out.println("iActorTargetPosY: "+iActorTargetPosY);
+
+			System.out.println("getX(): "+getX());
+			System.out.println("getY(): "+getY());
 
 			iActorTargetPosX+=iNewActorTargetPosX;
 			iActorTargetPosY+=iNewActorTargetPosY;
@@ -1518,9 +1596,94 @@ class RobotShip extends Actor {
 					resetProjectile();
 					return;
 				}
+
+				//destination to the left of hero projectile
+				//if (!bHasReachedDestinationX) {
+/*					
+				System.out.println("iNewActorTargetPosX: "+iNewActorTargetPosX);					
+				System.out.println("iActorTargetPosX: "+iActorTargetPosX);					
+				System.out.println("getX(): "+getX());					
+				System.out.println("iActorStepDestinationX: "+iActorStepDestinationX);
+*/				
+
+					if (iNewActorTargetPosX==0) {
+						//resetProjectile();
+					}
+					else if (iNewActorTargetPosX<0) {
+						if (iActorTargetPosX+getWidth()/2<=iActorStepDestinationX) {
+						  iActorTargetPosX=iActorStepDestinationX-getWidth()/2;
+						  bHasReachedDestinationX=true;
+						  //resetProjectile();
+						}
+						else {
+						  bHasReachedDestinationX=false;
+						}
+					}
+					//destination to the right of hero projectile
+					else {
+						if (iActorTargetPosX+getWidth()/2>=iActorStepDestinationX) {
+							iActorTargetPosX=iActorStepDestinationX-getWidth()/2;
+							bHasReachedDestinationX=true;
+							
+							//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+							//resetProjectile();
+						}		
+						else {
+						  bHasReachedDestinationX=false;
+						}				
+					}
+				//}
+
+				//if (!bHasReachedDestinationY) {		
+					//destination to the top of hero projectile
+					if (iNewActorTargetPosY==0) {
+						//resetProjectile();
+					}
+					else if (iNewActorTargetPosY<0) {
+						if (iActorTargetPosY+getHeight()/2<=iActorStepDestinationY) {
+												
+						iActorTargetPosY=iActorStepDestinationY-getHeight()/2;
+						bHasReachedDestinationY=true;
+						//resetProjectile();
+						}
+						else {
+						  bHasReachedDestinationY=false;
+						}				
+					}
+					//destination to the bottom of hero projectile
+					else {
+						if (iActorTargetPosY+getHeight()/2>=iActorStepDestinationY) {
+							iActorTargetPosY=iActorStepDestinationY-getHeight()/2;
+							bHasReachedDestinationY=true;
+							//resetProjectile();
+						}			
+						else {
+						  bHasReachedDestinationY=false;
+						}								
+					}			
+				//}
+
+					if ((bHasReachedDestinationX) && (bHasReachedDestinationY)) {
+						resetProjectile();				
+					}				
+
+					if (iActorTargetPosX+getWidth()>iStageWidth+iOffsetScreenWidthLeftMargin) {
+			//+iImageFrameWidth
+						resetProjectile();
+					}
+					else if (iActorTargetPosX<0+iOffsetScreenWidthLeftMargin){
+							resetProjectile();
+					}
+
+					if (iActorTargetPosY+getHeight()>iStageHeight) { //getHeight()/2
+						resetProjectile();
+					}
+					else if (iActorTargetPosY<0) {
+						resetProjectile();
+					}						
 		}
 		
-		
+/*		
 		if (myKeysDown[KEY_A])
 		{			
 			//edited by Mike, 20240924	
@@ -1594,6 +1757,7 @@ class RobotShip extends Actor {
 				setY(getY()+getStepY());
 			}
 		}
+*/
 
 		//added by Mike, 20240730
 		if (!bHasStarted) {
@@ -1664,6 +1828,44 @@ class RobotShip extends Actor {
 		iXCurrentDistanceTraveled=0;
 		iYCurrentDistanceTraveled=0;
 */
+
+		bHasFiredTemp = bHasFired;
+		
+		//note: resets also bHasFired;
+		resetProjectile();
+		
+/*		
+		//TODO: -reverify: this
+		if (isPointsOfRectIntersectingPointsOfRect(iMouseXPos,iMouseYPos, iPrevMouseXPos,iPrevMouseYPos)) {
+			//TODO: -add: hit wall animation;
+			//return;
+			
+			//do this only if at the borders of the inner stage
+		
+			//INNER STAGE; MAX
+			//iHorizontalOffset=(640-iStageMaxHeight)/2;
+			//var iInnerHorizontalOffset=(640-iStageMaxHeight)/2;
+			int iInnerVerticalOffset=iFrameHeight/2;			
+			int iInnerHorizontalOffset=iOffsetScreenWidthLeftMargin;
+
+			//reminder: innerStageWidth uses iStageMaxHeight
+		
+			if (getX()+iFrameWidth>=iInnerHorizontalOffset+iStageHeight) {
+				return;
+			}
+			else if (getX()<=0+iInnerHorizontalOffset) {
+				return;
+			}		
+			
+			if (getY()+iFrameHeight>=0+iStageHeight-iInnerVerticalOffset) {
+				return;
+			}
+			else if (getY()<=0) {
+				return;
+			}	
+		}
+*/
+
 		iPrevMouseXPos=iMouseXPos;
 		iPrevMouseYPos=iMouseYPos;		
 				
@@ -1677,6 +1879,10 @@ class RobotShip extends Actor {
 
 	    int iDeltaX=(iMouseXPos)-(this.getX()+this.getWidth()/2);
         int iDeltaY=(iMouseYPos)-(this.getY()+this.getHeight()/2);
+/*
+	    int iDeltaX=(iMouseXPos-iOffsetScreenWidthLeftMargin)-(this.getX()+this.getWidth()/2);
+        int iDeltaY=(iMouseYPos-iOffsetScreenHeightTopMargin)-(this.getY()+this.getHeight()/2);
+*/
 
 	    iDeltaY*=-1;
 
@@ -1704,9 +1910,7 @@ class RobotShip extends Actor {
 		//newMainImageTileProjectilePosY*=-1;
 		
 		iNewActorTargetPosY=(int)(ISTEP_Y_HERO*Math.cos(dMainImageTileStepAngleRad));
-	    iNewActorTargetPosY*=-1;
-		
-		
+	    iNewActorTargetPosY*=-1;				
 		//newMainImageTileProjectilePosX=mainImageTileProjectileStepX*Math.sin(fMainImageTileStepAngleRad).toFixed(3);
 		iNewActorTargetPosX=(int)(ISTEP_X_HERO*Math.sin(dMainImageTileStepAngleRad));
 
@@ -1717,6 +1921,16 @@ class RobotShip extends Actor {
 		iActorStepDestinationY=iMouseYPos;
 		
 		bHasFired=true;
+		
+		if (iDeltaX<0) {
+			bIsHeroFacingLeft=true;
+		}
+		else if (iDeltaX>0) {
+			bIsHeroFacingLeft=false;
+		}
+		else {
+			//bIsHeroFacingLeft=false;
+		}
 		
 		//System.out.println("iNewActorTargetPosY: "+iNewActorTargetPosY);
 	}
@@ -1816,13 +2030,27 @@ class RobotShip extends Actor {
 	}
 		
 */
-		if (iHeroAnimationDelayCount==iHeroAnimationDelayCountMax) {
-			iHeroAnimationCount=(iHeroAnimationCount+1)%3; //last hidden
 
-			iHeroAnimationDelayCount=0;
+/*
+		if ((getX()==iActorTargetPosX) && (getY()==iActorTargetPosY)) {
+			//resetProjectile();
+			//return;
+		} 
+		else {
+		}
+*/
+		if (bHasFired) {
+			if (iHeroAnimationDelayCount==iHeroAnimationDelayCountMax) {
+				iHeroAnimationCount=(iHeroAnimationCount+1)%3; //last hidden
+
+				iHeroAnimationDelayCount=0;
+			}
+			else {
+				iHeroAnimationDelayCount++;
+			}
 		}
 		else {
-			iHeroAnimationDelayCount++;
+			iHeroAnimationCount=0;
 		}
 
 		int iFrameY=0;
@@ -4474,10 +4702,11 @@ class Level2D extends Actor {
 
 		myBackgroundCanvas.synchronizeViewPortWithBackground(iViewPortX,iViewPortY);
 		myBackgroundCanvas.synchronizeKeys(myKeysDown);
-		
+/*		
 		myRobotShip.synchronizeViewPort(iViewPortX,iViewPortY, getStepX(),getStepY());		
 		myRobotShip.synchronizeKeys(myKeysDown);
-		myRobotShip.update();
+*/		
+		//myRobotShip.update();
 			
 		//-----------------------------------------------------------
 
