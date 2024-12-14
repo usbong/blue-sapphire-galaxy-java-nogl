@@ -15,7 +15,7 @@
  * @company: Usbong
  * @author: SYSON, MICHAEL B.
  * @date created: 20240522
- * @last updated: 20241213; from 20241212
+ * @last updated: 20241215; from 20241214
  * @website: www.usbong.ph
  *
  */
@@ -603,7 +603,7 @@ class Actor {
 	protected int iFrameCountMax=4;
 	protected int iFrameCountDelay=0;
 	//edited by Mike, 20240924; aircraft turn animation, faster
-	protected int iFrameCountDelayMax=12;//20;
+	protected int iFrameCountDelayMax=5;//12;//20;
 	
 	//added by Mike, 20241010
 	protected int iDeathFrameCount=0;
@@ -612,6 +612,12 @@ class Actor {
 	protected int iRotationDegrees=0;
 	protected int iFrameWidth=128;
 	protected int iFrameHeight=128;
+
+	protected int iFrameWidthLarge=64;
+	protected int iFrameHeightLarge=64;
+
+	protected int iFrameWidthDefault=32;
+	protected int iFrameHeightDefault=32;
 	
 	//added by Mike, 20240918
 	protected double dImageScaleOffsetWidth=0;
@@ -697,7 +703,7 @@ class Actor {
 	protected int iHeroAnimationCount=-1; //0; //due to immediately +1 in execution;
 	protected int iHeroAnimationCountMax=5;
 	protected int iHeroAnimationDelayCount=0;
-	protected int iHeroAnimationDelayCountMax=5;
+	protected int iHeroAnimationDelayCountMax=2;//5;
 	protected boolean bIsHeroInRiver=false;
 	protected boolean bIsHeroFacingLeft=false;
 	protected boolean bHasFired=false;
@@ -1465,7 +1471,7 @@ class Actor {
 }
 
 //added by Mike, 20240622
-class RobotShip extends Actor {
+class Hero extends Actor {
 
 	protected final int ISTEP_X_HERO=2;
 	protected final int ISTEP_Y_HERO=2;
@@ -1475,7 +1481,7 @@ class RobotShip extends Actor {
 	private boolean bIsHeroDash=false;
 	private boolean bHasHeroShotFireball=false;	
 
-    public RobotShip(int iOffsetScreenWidthLeftMargin, int iOffsetScreenHeightTopMargin, int iStageWidth, int iStageHeight, int iTileWidth, int iTileHeight) {
+    public Hero(int iOffsetScreenWidthLeftMargin, int iOffsetScreenHeightTopMargin, int iStageWidth, int iStageHeight, int iTileWidth, int iTileHeight) {
 	  super(iOffsetScreenWidthLeftMargin, iOffsetScreenHeightTopMargin, iStageWidth, iStageHeight, iTileWidth, iTileHeight);
 
 	  try {
@@ -1524,8 +1530,11 @@ class RobotShip extends Actor {
 		iActorTargetPosX = getX();
 		iActorTargetPosY = getY();
 
-		iNewActorTargetPosX=iActorTargetPosX;
-		iNewActorTargetPosY=iActorTargetPosY;
+		//solves problem of disappearing hero;
+		//due to its position gets twice the value;
+		//TODO: -reverify;
+		iNewActorTargetPosX=0;//iActorTargetPosX;
+		iNewActorTargetPosY=0;//iActorTargetPosY;
 				
 		bHasFired=false;	
 		
@@ -1572,13 +1581,13 @@ class RobotShip extends Actor {
 
 			System.out.println("getX(): "+getX());
 			System.out.println("getY(): "+getY());
-
-			iActorTargetPosX+=iNewActorTargetPosX;
-			iActorTargetPosY+=iNewActorTargetPosY;
 			
 			//System.out.println(">>>iActorTargetPosX: "+iActorTargetPosX);
 			//System.out.println(">>>iActorTargetPosY: "+iActorTargetPosY);
-			
+	
+			iActorTargetPosX+=iNewActorTargetPosX;
+			iActorTargetPosY+=iNewActorTargetPosY;
+	
 /*		
 			setX(iActorTargetPosX);
 			setY(iActorTargetPosY);
@@ -1600,13 +1609,19 @@ class RobotShip extends Actor {
 					//TODO: -add: this
 					resetProjectile();
 					return;
-				}
+				}				
 
 				//setX(getX()+getStepX());
 				//setY(getY()+getStepY());
-		
+
 				setX(iActorTargetPosX);		
 				setY(iActorTargetPosY);		
+				
+/*
+				setX(getX()+iActorTargetPosX);		
+				setY(getY()+iActorTargetPosY);		
+*/
+				
 /*				
 			}
 */			
@@ -1701,6 +1716,23 @@ class RobotShip extends Actor {
 						resetProjectile();
 					}						
 		}
+		
+/*	//TODO: -add: this		
+		//STAGE; MAX
+		if (getX()+iFrameWidthDefault>iStageWidth) {
+			setX(iStageWidth-iFrameWidthDefault);
+		}
+		else if (getX()<0) {
+			setX(0);
+		}
+
+		if (getY()+iFrameHeightDefault>iStageHeight) {
+			setY(iStageHeight-iFrameHeightDefault);//-iFrameHeightDefault*0.25);
+		}
+		else if (getY()<0) {
+			setY(0);
+		}
+*/		
 		
 /*		
 		if (myKeysDown[KEY_A])
@@ -4211,7 +4243,7 @@ class Level2D extends Actor {
 
 	private BackgroundCanvas myBackgroundCanvas;
 
-	private RobotShip myRobotShip;
+	private Hero myHero;
 
 	private UsbongText myUsbongText;
 	
@@ -4289,7 +4321,7 @@ class Level2D extends Actor {
 	  myBackgroundCanvas = new BackgroundCanvas(0+iOffsetScreenWidthLeftMargin,0+iOffsetScreenHeightTopMargin,iStageWidth, iStageHeight, iTileWidth, iTileHeight);
 
 	  //added by Mike, 20240810
-	  myRobotShip = new RobotShip(iOffsetScreenWidthLeftMargin,iOffsetScreenHeightTopMargin,iStageWidth, iStageHeight, iTileWidth, iTileHeight);
+	  myHero = new Hero(iOffsetScreenWidthLeftMargin,iOffsetScreenHeightTopMargin,iStageWidth, iStageHeight, iTileWidth, iTileHeight);
 
 	  //added by Mike, 20240907
 	  myUsbongText = new UsbongText(iOffsetScreenWidthLeftMargin,iOffsetScreenHeightTopMargin,iStageWidth, iStageHeight, iTileWidth, iTileHeight);
@@ -4554,22 +4586,25 @@ class Level2D extends Actor {
 
 		//System.out.println("Pressed!");
 
-		  //myPlasmaContainer[0].processMouseInput(e, myRobotShip.getX(),myRobotShip.getY());
-
+		  //myPlasmaContainer[0].processMouseInput(e, myHero.getX(),myHero.getY());
+/*
+		System.out.println("iStageHeight: "+iStageHeight);
+		System.out.println("iStageWidth: "+iStageWidth);
+*/
 		iMouseXPos=e.getX();
 		iMouseYPos=e.getY();
 		
 		//processResultFromInput(iMouseXPos, iMouseXPos);
 		
-		myRobotShip.processMouseInput(iMouseXPos, iMouseYPos);
+		myHero.processMouseInput(iMouseXPos, iMouseYPos);
 
 /*		
 		//added by Mike, 20241016
-		if (!myRobotShip.isActive()) {
+		if (!myHero.isActive()) {
 			return;
 		}
 
-		if (myRobotShip.getCurrentState()==DYING_STATE) {
+		if (myHero.getCurrentState()==DYING_STATE) {
 			return;
 		}
 		
@@ -4596,11 +4631,11 @@ class Level2D extends Actor {
 	  iMouseYPos=e.getY();
 	  
 	  //added by Mike, 20241016
-	  if (!myRobotShip.isActive()) {
+	  if (!myHero.isActive()) {
 		return;
 	  }
 	  
-	  if (myRobotShip.getCurrentState()==DYING_STATE) {
+	  if (myHero.getCurrentState()==DYING_STATE) {
 		return;
 	  }
 	  
@@ -4616,7 +4651,7 @@ class Level2D extends Actor {
 			  System.out.println("Plasma Charge Released!: "+iPlasmaCharge);  
 			}
 			  
-			myPlasmaContainer[i].processMouseInput(iMouseXPos, iMouseYPos, myRobotShip.getX(),myRobotShip.getY());
+			myPlasmaContainer[i].processMouseInput(iMouseXPos, iMouseYPos, myHero.getX(),myHero.getY());
 				
 			//consider removing
 			bIsFiring=true;				    
@@ -4652,7 +4687,7 @@ class Level2D extends Actor {
 	//TODO: -fix: collision detection; use TILE_WALL in Background class;
 	@Override
 	public void update() {
-
+/*
 		if (!getIsViewPortStopped()) {
 			//added by Mike, 20240827
 			boolean bHasPressedAnyKey=false;
@@ -4724,22 +4759,23 @@ class Level2D extends Actor {
 				//bHasPressedAnyKey=true;
 			}
 
-/*			
-			//added by Mike, 20240827
-			if (!bHasPressedAnyKey) {
-				//reset to default
-				if (iStepX<0) {
-					iStepX=-ISTEP_X_DEFAULT;
-				}
-				else {
-					iStepX=ISTEP_X_DEFAULT;
-				}
 
-				setX(getX()+iStepX);
-			}
-*/			
+////			//added by Mike, 20240827
+////			if (!bHasPressedAnyKey) {
+////				//reset to default
+////				if (iStepX<0) {
+////					iStepX=-ISTEP_X_DEFAULT;
+////				}
+////				else {
+////					iStepX=ISTEP_X_DEFAULT;
+////				}
+////
+////				setX(getX()+iStepX);
+////			}			
 		}
+*/		
 
+/*
 		//added by Mike, 20240807
 		iViewPortX=this.getX();
 		iViewPortY=this.getY();
@@ -4766,16 +4802,18 @@ class Level2D extends Actor {
 		//added by Mike, 20240810
 		iViewPortX=this.getX();
 		iViewPortY=this.getY();
+*/
 
 		//iViewPortY=0;
 
 		myBackgroundCanvas.synchronizeViewPortWithBackground(iViewPortX,iViewPortY);
 		myBackgroundCanvas.synchronizeKeys(myKeysDown);
+
 /*		
-		myRobotShip.synchronizeViewPort(iViewPortX,iViewPortY, getStepX(),getStepY());		
-		myRobotShip.synchronizeKeys(myKeysDown);
+		myHero.synchronizeViewPort(iViewPortX,iViewPortY, getStepX(),getStepY());		
+		myHero.synchronizeKeys(myKeysDown);
 */		
-		//myRobotShip.update();
+		//myHero.update();
 			
 		//-----------------------------------------------------------
 
@@ -4903,17 +4941,17 @@ class Level2D extends Actor {
 		
 			//removed by Mike, 20241019
 			//put in collideWith(...); due to hitting Hero		
-			//myEnemyPlasmaContainer[i].collideWithEnemy(myRobotShip);
+			//myEnemyPlasmaContainer[i].collideWithEnemy(myHero);
 		}
 
 		//added by Mike, 20240809
 		myBackgroundCanvas.update();
 
 		//edited by Mike, 20241016
-		if (myRobotShip.isActive()) {
+		if (myHero.isActive()) {
 			//added by Mike, 20240810
-			myRobotShip.update();
-			this.collideWith(myRobotShip);
+			myHero.update();
+			this.collideWith(myHero);
 		}		
 	}
 
@@ -5246,10 +5284,10 @@ class Level2D extends Actor {
 
 		//System.out.println("iViewPortX: "+iViewPortX);
 
-		//use myRobotShip.getY(), instead of myViewPortY,
+		//use myHero.getY(), instead of myViewPortY,
 		//due to can move more vertically;
 
-		double dMiniMapHeroY=((myRobotShip.getY()*1.0)/(MAX_TILE_MAP_HEIGHT*iTileHeight)*iMiniMapHeight)-iMiniMapTileHeight;
+		double dMiniMapHeroY=((myHero.getY()*1.0)/(MAX_TILE_MAP_HEIGHT*iTileHeight)*iMiniMapHeight)-iMiniMapTileHeight;
 		
 		//added by Mike, 20240905
 		if (bIsMaxedMonitorHeight) {
@@ -5411,7 +5449,7 @@ class Level2D extends Actor {
 			}
 		}
 
-		myRobotShip.draw(g);
+		myHero.draw(g);
 
 		drawMiniMap(g);
 
