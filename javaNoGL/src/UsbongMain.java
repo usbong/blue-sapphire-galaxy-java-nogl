@@ -15,7 +15,7 @@
  * @company: Usbong
  * @author: SYSON, MICHAEL B.
  * @date created: 20240522
- * @last updated: 20241215; from 20241214
+ * @last updated: 20241217; from 20241215
  * @website: www.usbong.ph
  *
  */
@@ -703,7 +703,7 @@ class Actor {
 	protected int iHeroAnimationCount=-1; //0; //due to immediately +1 in execution;
 	protected int iHeroAnimationCountMax=5;
 	protected int iHeroAnimationDelayCount=0;
-	protected int iHeroAnimationDelayCountMax=2;//5;
+	protected int iHeroAnimationDelayCountMax=5; //reverify; 2 when faster processor??
 	protected boolean bIsHeroInRiver=false;
 	protected boolean bIsHeroFacingLeft=false;
 	protected boolean bHasFired=false;
@@ -1472,7 +1472,6 @@ class Actor {
 
 //added by Mike, 20240622
 class Hero extends Actor {
-
 	protected final int ISTEP_X_HERO=2;
 	protected final int ISTEP_Y_HERO=2;
 	
@@ -1480,12 +1479,26 @@ class Hero extends Actor {
 	private long lMouseClickMaxElapsedTime=250; //1/4 second
 	private boolean bIsHeroDash=false;
 	private boolean bHasHeroShotFireball=false;	
-
+	
+	protected BufferedImage dustEffectBufferedImage;
+	
+	//0; //due to immediately +1 in execution;
+	protected int iDustEffectAnimationCount=-1; 
+	protected int iDustEffectAnimationCountMax=4;
+	protected int iDustEffectAnimationDelayCount=0;
+	protected int iDustEffectAnimationDelayCountMax=4;	
+	protected boolean bIsDustEffectActive=false;
+	protected int iDustEffectXPos=0;
+	protected int iDustEffectYPos=0;
+			
     public Hero(int iOffsetScreenWidthLeftMargin, int iOffsetScreenHeightTopMargin, int iStageWidth, int iStageHeight, int iTileWidth, int iTileHeight) {
 	  super(iOffsetScreenWidthLeftMargin, iOffsetScreenHeightTopMargin, iStageWidth, iStageHeight, iTileWidth, iTileHeight);
 
 	  try {
 		  myBufferedImage = ImageIO.read(new File("./res/inputImage512x512.png")); //robotship.png
+		  
+		  dustEffectBufferedImage = ImageIO.read(new File("./res/dustEffectBig.png"));
+		  
       } catch (IOException ex) {
       }
 	}
@@ -1524,6 +1537,8 @@ class Hero extends Actor {
 		iStepY=ISTEP_Y_DEFAULT;//*2; //faster by 1 than the default
 
 		myTileType=TILE_HERO;
+		
+		bIsDustEffectActive=false;
 	}
 
 	public void resetProjectile() {		
@@ -1626,10 +1641,10 @@ class Hero extends Actor {
 			}
 */			
 
-				if ((getX()==iActorStepDestinationX) && (getY()==iActorStepDestinationY)) {
-					resetProjectile();
-					return;
-				}
+			if ((getX()==iActorStepDestinationX) && (getY()==iActorStepDestinationY)) {
+				resetProjectile();
+				return;
+			}
 
 				//destination to the left of hero projectile
 				//if (!bHasReachedDestinationX) {
@@ -1640,81 +1655,81 @@ class Hero extends Actor {
 				System.out.println("iActorStepDestinationX: "+iActorStepDestinationX);
 */				
 
-					if (iNewActorTargetPosX==0) {
-						//resetProjectile();
-					}
-					else if (iNewActorTargetPosX<0) {
-						if (iActorTargetPosX+getWidth()/2<=iActorStepDestinationX) {
-						  iActorTargetPosX=iActorStepDestinationX-getWidth()/2;
-						  bHasReachedDestinationX=true;
-						  //resetProjectile();
-						}
-						else {
-						  bHasReachedDestinationX=false;
-						}
-					}
-					//destination to the right of hero projectile
-					else {
-						if (iActorTargetPosX+getWidth()/2>=iActorStepDestinationX) {
-							iActorTargetPosX=iActorStepDestinationX-getWidth()/2;
-							bHasReachedDestinationX=true;
-							
-							//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-							//resetProjectile();
-						}		
-						else {
-						  bHasReachedDestinationX=false;
-						}				
-					}
-				//}
+			if (iNewActorTargetPosX==0) {
+				//resetProjectile();
+			}
+			else if (iNewActorTargetPosX<0) {
+				if (iActorTargetPosX+getWidth()/2<=iActorStepDestinationX) {
+				  iActorTargetPosX=iActorStepDestinationX-getWidth()/2;
+				  bHasReachedDestinationX=true;
+				  //resetProjectile();
+				}
+				else {
+				  bHasReachedDestinationX=false;
+				}
+			}
+			//destination to the right of hero projectile
+			else {
+				if (iActorTargetPosX+getWidth()/2>=iActorStepDestinationX) {
+					iActorTargetPosX=iActorStepDestinationX-getWidth()/2;
+					bHasReachedDestinationX=true;
+					
+					//System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+					//resetProjectile();
+				}		
+				else {
+				  bHasReachedDestinationX=false;
+				}				
+			}
+		//}
 
-				//if (!bHasReachedDestinationY) {		
-					//destination to the top of hero projectile
-					if (iNewActorTargetPosY==0) {
-						//resetProjectile();
-					}
-					else if (iNewActorTargetPosY<0) {
-						if (iActorTargetPosY+getHeight()/2<=iActorStepDestinationY) {
-												
-						iActorTargetPosY=iActorStepDestinationY-getHeight()/2;
-						bHasReachedDestinationY=true;
-						//resetProjectile();
-						}
-						else {
-						  bHasReachedDestinationY=false;
-						}				
-					}
-					//destination to the bottom of hero projectile
-					else {
-						if (iActorTargetPosY+getHeight()/2>=iActorStepDestinationY) {
-							iActorTargetPosY=iActorStepDestinationY-getHeight()/2;
-							bHasReachedDestinationY=true;
-							//resetProjectile();
-						}			
-						else {
-						  bHasReachedDestinationY=false;
-						}								
-					}			
-				//}
+		//if (!bHasReachedDestinationY) {		
+			//destination to the top of hero projectile
+			if (iNewActorTargetPosY==0) {
+				//resetProjectile();
+			}
+			else if (iNewActorTargetPosY<0) {
+				if (iActorTargetPosY+getHeight()/2<=iActorStepDestinationY) {
+										
+				iActorTargetPosY=iActorStepDestinationY-getHeight()/2;
+				bHasReachedDestinationY=true;
+				//resetProjectile();
+				}
+				else {
+				  bHasReachedDestinationY=false;
+				}				
+			}
+			//destination to the bottom of hero projectile
+			else {
+				if (iActorTargetPosY+getHeight()/2>=iActorStepDestinationY) {
+					iActorTargetPosY=iActorStepDestinationY-getHeight()/2;
+					bHasReachedDestinationY=true;
+					//resetProjectile();
+				}			
+				else {
+				  bHasReachedDestinationY=false;
+				}								
+			}			
+		//}
 
-					if ((bHasReachedDestinationX) && (bHasReachedDestinationY)) {
-						resetProjectile();				
-					}				
+			if ((bHasReachedDestinationX) && (bHasReachedDestinationY)) {
+				resetProjectile();				
+			}				
 
-					if (iActorTargetPosX+getWidth()>iStageWidth+iOffsetScreenWidthLeftMargin) {
-			//+iImageFrameWidth
-						resetProjectile();
-					}
-					else if (iActorTargetPosX<0+iOffsetScreenWidthLeftMargin){
-							resetProjectile();
-					}
+			if (iActorTargetPosX+getWidth()>iStageWidth+iOffsetScreenWidthLeftMargin) {
+	//+iImageFrameWidth
+				resetProjectile();
+			}
+			else if (iActorTargetPosX<0+iOffsetScreenWidthLeftMargin){
+					resetProjectile();
+			}
 
-					if (iActorTargetPosY+getHeight()>iStageHeight) { //getHeight()/2
-						resetProjectile();
-					}
-					else if (iActorTargetPosY<0) {
-						resetProjectile();
-					}						
+			if (iActorTargetPosY+getHeight()>iStageHeight) { //getHeight()/2
+				resetProjectile();
+			}
+			else if (iActorTargetPosY<0) {
+				resetProjectile();
+			}			
 		}
 		
 /*	//TODO: -add: this		
@@ -1885,6 +1900,14 @@ class Hero extends Actor {
 		//note: resets also bHasFired;
 		resetProjectile();
 		
+		if (!bIsDustEffectActive) {
+			bIsDustEffectActive=true;
+			iDustEffectXPos=getX();
+			iDustEffectYPos=getY();
+			iDustEffectAnimationDelayCount=0;
+			iDustEffectAnimationCount=0;
+		}
+		
 /*		
 		//TODO: -reverify: this
 		if (isPointsOfRectIntersectingPointsOfRect(iMouseXPos,iMouseYPos, iPrevMouseXPos,iPrevMouseYPos)) {
@@ -1945,13 +1968,13 @@ class Hero extends Actor {
 		
 		//becomes DASH attack;
 		if (bHasFiredTemp) {
-				//quick double mouse click; within 1/4 second
-				if (bIsHeroDash) {
-					iActorStepY=iActorStepYMax;
-					iActorStepX=iActorStepXMax;
-					
-					System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>DITO");
-				}
+			//quick double mouse click; within 1/4 second
+			if (bIsHeroDash) {
+				iActorStepY=iActorStepYMax;
+				iActorStepX=iActorStepXMax;
+				
+				System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>DITO");
+			}
 		}
 		else {
 			iActorStepY=iActorVelocityY;
@@ -2025,6 +2048,8 @@ class Hero extends Actor {
 		else {
 			//bIsHeroFacingLeft=false;
 		}
+				
+		//bIsDustEffectActive=true;
 		
 		//System.out.println("iNewActorTargetPosY: "+iNewActorTargetPosY);
 	}
@@ -2049,7 +2074,7 @@ class Hero extends Actor {
 		System.out.println("HIT!!! SET TO DYING STATE");		
 	}
 		
-	//added by Mike, 20241019
+  //added by Mike, 20241019
   @Override
   public void drawExplosion(Graphics g, int iInputX, int iInputY) {
 	Rectangle2D rect = new Rectangle2D.Float();
@@ -2084,6 +2109,80 @@ class Hero extends Actor {
 	//put after the last object to be drawn
 	//g2d.dispose();
   }		
+  
+  public void drawDustEffect(Graphics g, int iInputX, int iInputY) {
+	Rectangle2D rect = new Rectangle2D.Float();
+    AffineTransform identity = new AffineTransform();
+    Graphics2D g2d = (Graphics2D)g;
+	
+    AffineTransform trans = new AffineTransform();
+    trans.setTransform(identity);
+	trans.translate(iInputX,iInputY);
+	trans.scale((iTileWidth*1.0)/iFrameWidth,(iTileHeight*1.0)/iFrameHeight);
+
+	//added by Mike, 20240714
+	
+	//iDustEffectAnimationCount
+	
+	if (iDustEffectAnimationDelayCount==iDustEffectAnimationDelayCountMax) {
+		iDustEffectAnimationCount=(iDustEffectAnimationCount+1)%iDustEffectAnimationDelayCountMax;//4; last hidden
+		iDustEffectAnimationDelayCount=0;
+	}
+	else {
+		iDustEffectAnimationDelayCount++;
+	}
+
+	//put this after scale;
+	trans.translate(0-(iDustEffectAnimationCount)*iFrameWidth,0);	
+	
+	//added by Mike, 20240625
+	g2d.setTransform(trans);
+	
+	rect.setRect(0+(iDustEffectAnimationCount)*iFrameWidth,0, iFrameWidth,iFrameHeight);		
+	
+/*
+	int iFrameY=0;
+	//int iFrameXOffset=0;
+
+	if (iDustEffectAnimationCount==0) { 
+		trans.translate(0-iDustEffectAnimationCount*iFrameWidth,0-iFrameY);					
+		g2d.setTransform(trans);
+		rect.setRect(0+iDustEffectAnimationCount*iFrameWidth,0+iFrameY, iFrameWidth,iFrameHeight);	
+	}
+	else if (iDustEffectAnimationCount==1) { 
+		trans.translate(0-iDustEffectAnimationCount*iFrameWidth-iFrameWidth,0-iFrameY);
+		g2d.setTransform(trans);
+		rect.setRect(0+iDustEffectAnimationCount*iFrameWidth+iFrameWidth,0+iFrameY, iFrameWidth,iFrameHeight);	
+	}
+	else {
+		trans.translate(0-iDustEffectAnimationCount*iFrameWidth-iFrameWidth*2,0-iFrameY);
+		g2d.setTransform(trans);
+		rect.setRect(0+iDustEffectAnimationCount*iFrameWidth+iFrameWidth*2,0+iFrameY, iFrameWidth,iFrameHeight);
+	}	
+
+	trans.translate(0-iDustEffectAnimationCount*iFrameWidth,0-iFrameY);					
+	g2d.setTransform(trans);
+	rect.setRect(0+iDustEffectAnimationCount*iFrameWidth,0+iFrameY, iFrameWidth,iFrameHeight);	
+*/
+	
+	Area myClipArea = new Area(rect);
+
+    //edited by Mike, 20240625; from 20240623
+    g2d.setClip(myClipArea);
+
+	//edited by Mike, 20240924; from 20240714
+    //g2d.drawImage(myBufferedImage,-(iFrameCount)*iFrameWidth, 0, null);
+    //g2d.drawImage(dustEffectBufferedImage,-(0)*iFrameWidth, 0, null);
+    g2d.drawImage(dustEffectBufferedImage,-(0)*iFrameWidth, 0+iFrameHeight/4, null); //near feet
+
+	if (iDustEffectAnimationCount>=iDustEffectAnimationCountMax-1) {
+		bIsDustEffectActive=false;
+	}
+
+	//removed by Mike, 20240711; from 20240625
+	//put after the last object to be drawn
+	//g2d.dispose();
+  }		  
 		
   //Additional Reference: 	https://docs.oracle.com/javase/tutorial/2d/advanced/examples/ClipImage.java; last accessed: 20240625
   //edited by Mike, 20240924
@@ -2246,6 +2345,11 @@ class Hero extends Actor {
 	}
 	else {
 		drawExplosion(g, this.getX(), this.getY());		
+	}
+	
+	if (bIsDustEffectActive) {
+		//drawDustEffect(g, this.getX(), this.getY());
+		drawDustEffect(g, iDustEffectXPos, iDustEffectYPos);
 	}
   }
 }
@@ -5451,7 +5555,7 @@ class Level2D extends Actor {
 
 		myHero.draw(g);
 
-		drawMiniMap(g);
+		//drawMiniMap(g);
 
 		drawMargins(g);
 
