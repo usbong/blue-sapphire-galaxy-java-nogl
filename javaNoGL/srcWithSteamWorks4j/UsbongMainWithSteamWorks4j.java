@@ -40,6 +40,8 @@
  2) https://github.com/usbong/game-off-2023; last accessed: 20240623
 */
 
+package classes;
+
 import com.codedisaster.steamworks.*;
 import javax.swing.SwingUtilities;
 

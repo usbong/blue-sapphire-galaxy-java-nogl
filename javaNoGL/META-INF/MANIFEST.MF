@@ -1,0 +1,5 @@
+Main-Class: classes.UsbongMainWithSteamWorks4j
+Class-Path: lib/steamworks4j-1.7.1-20180428.093430-2.jar
+Manifest-Version: 1.0
+Created-By: 1.8.0_201 (Oracle Corporation)
+
