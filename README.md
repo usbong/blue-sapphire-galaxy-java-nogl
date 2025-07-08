@@ -1,3 +1,24 @@
+
+# Google: "Steamworks java launch"
+
+> AI Overview
+
+> Launching a Java application with Steamworks functionality involves configuring Steam to run your Java executable and ensuring the Steamworks API is correctly integrated.
+
+...
+
+> 2. Configuring Steam to Launch your Java Application:
+
+>    Add as a Non-Steam Game:
+
+>    The simplest method is to add your Java application as a "Non-Steam Game" within the Steam client.
+
+>        Open Steam and navigate to "Games" > "Add a Non-Steam Game to My Library...".
+
+>        Browse and select the java.exe (Windows) or the Java executable (macOS/Linux) that will run your application.
+
+...
+
 # Notes
 
 1) https://docs.oracle.com/en/graalvm/enterprise/22/docs/reference-manual/native-image/guides/build-native-executable-from-jar/
