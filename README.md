@@ -1,4 +1,7 @@
+# > How to Upload a Game to Steam - Step by Step Guide 
 
+https://www.youtube.com/watch?v=gwMPvEFFomE; last accessed: 20250708
+ 
 # Google: "Steamworks java launch"
 
 > AI Overview
