@@ -1,3 +1,7 @@
+# https://jvm-gaming.org/t/steam-learnings/70063/2; last accessed: 20250709
+
+## JRE: https://www.azul.com/downloads/?os=windows&package=jre#zulu; last accessed: 20250709
+
 # > How to Upload a Game to Steam - Step by Step Guide 
 
 https://www.youtube.com/watch?v=gwMPvEFFomE; last accessed: 20250708
