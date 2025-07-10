@@ -1,3 +1,9 @@
+# https://learn.microsoft.com/en-us/java/openjdk/download; last accessed: 20250710
+
+## JRE: https://adoptium.net/temurin/releases/?version=8; last accessed: 20250710
+
+## --
+
 # https://jvm-gaming.org/t/steam-learnings/70063/2; last accessed: 20250709
 
 ## JRE: https://www.azul.com/downloads/?os=windows&package=jre#zulu; last accessed: 20250709
