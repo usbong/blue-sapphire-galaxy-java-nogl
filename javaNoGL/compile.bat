@@ -19,7 +19,12 @@ REM javac -cp .;jinput-2.0.10.jar;jinput-2.0.10-natives-all.jar; *.java
 REM OK; but jinput uses the later JDK version 17 
 REM
 
+REM edited by Mike, 20250710
 javac "./src/"*.java
+
+REM put inside classes folder; .java files have "package classes;"
+REM problem when running if inside "classes" folder in root directory
+REM javac -d . "./src/"*.java
 
 REM error;
 REM javac @options.txt @classes.txt

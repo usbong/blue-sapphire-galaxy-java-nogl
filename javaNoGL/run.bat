@@ -17,4 +17,15 @@ REM
 REM cd src
 REM java UsbongMain
 
-java -classpath "./src" UsbongMain
+REM java -classpath "./src" UsbongMain
+
+REM edited by Mike, 20250710
+REM problem when running if inside "classes" folder in root directory
+REM java -classpath "./classes" UsbongMain
+
+REM java -classpath "./src" UsbongMain
+
+echo ERROR: The java command in this batch file no longer works when the java files have 'package classes;'
+
+REM "./javapath/OpenJDK8U-jre_x64_windows_hotspot_8u452b09/jdk8u452-b09-jre/bin/java" -classpath "./src" UsbongMain  
+

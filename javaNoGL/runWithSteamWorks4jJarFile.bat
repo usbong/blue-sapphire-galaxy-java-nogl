@@ -11,7 +11,7 @@ REM
 REM @company: USBONG
 REM @author: SYSON, MICHAEL B.
 REM @date created: 20240719
-REM @date updated: 20250708; from 20241204
+REM @date updated: 20250710; from 20250708
 REM
 REM References:
 REM 1) https://jvm-gaming.org/t/steamworks4j-just-starting-out-on-steam-and-have-a-few-questions/59269/4;
@@ -26,4 +26,17 @@ REM java -cp "./src/;./srcWithSteamWorks4j;./lib/steamworks4j-1.7.1-20180428.093
 
 REM the main .jar file has to be in the root directory
 REM OK
-java -jar "./UsbongMainWithSteamWorks4j.jar"  
+REM java -jar "./UsbongMainWithSteamWorks4j.jar"  
+
+REM "./javapath/zulu24.30.11-ca-jre24.0.1-win_x64/bin/java" -jar "./UsbongMainWithSteamWorks4j.jar"  
+
+REM "./javapath/zulu24.30.11-ca-jre24.0.1-win_x64/bin/java" --enable-native-access=ALL-UNNAMED -jar "./UsbongMainWithSteamWorks4j.jar"  
+
+REM "./javapath/jre1.8.0_201/bin/java" -jar "./UsbongMainWithSteamWorks4j.jar"  
+
+REM "./javapath/microsoft-jdk-21.0.7-windows-x64/jdk-21.0.7+6/bin/java" -jar "./UsbongMainWithSteamWorks4j.jar"  
+
+REM "./javapath/microsoft-jdk-11.0.27-windows-x64/jdk-11.0.27+6/bin/java" -jar "./UsbongMainWithSteamWorks4j.jar"  
+
+"./javapath/OpenJDK8U-jre_x64_windows_hotspot_8u452b09/jdk8u452-b09-jre/bin/java" -jar "./UsbongMainWithSteamWorks4j.jar"  
+
