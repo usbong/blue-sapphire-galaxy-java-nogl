@@ -1,3 +1,18 @@
+# > How to Upload a Game to Steam - Step by Step Guide: https://www.youtube.com/watch?v=gwMPvEFFomE; last accessed: 20250711; from 20250708
+
+# > Download latest SDK: https://partner.steamgames.com/home; last accessed: 20250711
+
+> Google
+
+> AI Overview
+
+> The "ERROR! Failed to initialize build on server (Invalid Parameter)" is a common error when uploading builds to Steamworks. It usually indicates an issue with the build configuration or the data being uploaded. The problem often stems from incorrect parameters like using the wrong AppID or BuildID, or failing to properly set the live or local parameters. 
+
+Find the `AppID` here: https://partner.steamgames.com/apps/; last accessed: 20250711
+
+
+## --
+
 # https://learn.microsoft.com/en-us/java/openjdk/download; last accessed: 20250710
 
 ## JRE: https://adoptium.net/temurin/releases/?version=8; last accessed: 20250710
