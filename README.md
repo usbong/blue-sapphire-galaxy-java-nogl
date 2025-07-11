@@ -2,6 +2,18 @@
 
 # > Download latest SDK: https://partner.steamgames.com/home; last accessed: 20250711
 
+steamworks_sdk_162/sdk/tools/ContentBuilder/content/bluesapphiregalaxy_windows/<br/>
+--> assets/<br/>
+--> classes/<br/>
+--> javapath/<br/>
+--> lib/<br/>
+--> res/<br/>
+game.c<br/>
+game.exe<br/>
+runWithSteamWorks4jJarFile.bat<br/>
+UsbongMainWithSteamWorks4j.jar
+
+
 > Google
 
 > AI Overview
