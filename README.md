@@ -1,3 +1,14 @@
+# Test the .zip of the app in another computer
+
+https://partner.steamgames.com/apps/builds; last accessed: 20250711
+
+1) App Admin (https://partner.steamgames.com/apps/landing/...)
+2) Depots Included: Depot (https://partner.steamgames.com/apps/depotmanifest/...)
+
+> Depot Manifest: Download depot as .ZIP
+
+noted when running `game.exe`, "Windows protected your PC..." Warning Message
+
 # > How to Upload a Game to Steam - Step by Step Guide: https://www.youtube.com/watch?v=gwMPvEFFomE; last accessed: 20250711; from 20250708
 
 # > Download latest SDK: https://partner.steamgames.com/home; last accessed: 20250711
