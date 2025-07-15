@@ -1,3 +1,33 @@
+# Test XBOX360 Controller
+
+https://github.com/usbong/blue-sapphire-galaxy-java-nogl/blob/main/inputTest.cpp; last accessed: 20250716
+
+No input received from XBOX360 Controller, though another controller, e.g. [Sidewinder](https://github.com/usbong/documentation/blob/a0aee194c4b8a4e7a96aa49b8477ae1333db79f8/Usbong/R%26D/Automotive/winmain.cpp#L322), could be made to work.
+
+## --
+
+https://github.com/walbourn/directx-sdk-samples-reworked/blob/main/XInput/SimpleController/SimpleController.cpp; last accessed: 20250716
+
+`gcc.exe "D:\Usbong\RD\sample\SimpleController.cpp" -lgdi32 -o "D:\Usbong\RD\sample\SimpleController.exe"`
+
+Fails using gcc (not via Visual Studio): `Xinput.h: No such file or directory`
+
+## Similar Problem: 
+
+https://github.com/godotengine/godot/issues/4914; last accessed: 20250716
+
+> windows/mingw build error on latest sync #4914
+
+> May 30, 2026
+
+> In file included from platform\windows\os_windows.cpp:54:0:
+
+> platform\windows\joystick.h:36:96 fatal error: xinput.h: No such file or directory
+
+> #include <xinput.h> // on unix the file is called "xinput.h", on windows I'm sure it won't mind
+
+## Note: mingw 64-bit for Windows: https://winlibs.com/#download-release; last accessed: 20250716
+
 # Test the .zip of the app in another computer
 
 https://partner.steamgames.com/apps/builds; last accessed: 20250711
