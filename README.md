@@ -1,3 +1,23 @@
+# Google: "sdl xinput controller"
+
+> AI Overview
+
+> SDL's SDL_GameController API provides a consistent interface for interacting with various game controllers, including those that emulate XInput. XInput is a Microsoft API primarily used for Xbox 360 and later controllers on Windows, but SDL's SDL_GameController abstracts away the underlying specifics, offering a unified way to handle input from different controllers. This allows developers to write code that works with various controllers without needing to handle the unique aspects of each one. 
+
+## Google: "SDL_PollEvent controller"
+
+> AI Overview
+
+> SDL_PollEvent is a function in the SDL (Simple DirectMedia Layer) library used to retrieve events from the event queue. It's a core part of handling user input and other system events in SDL applications. 
+
+> Controller input is handled through SDL_Event structures with the type member set to SDL_CONTROLLERBUTTONDOWN, SDL_CONTROLLERBUTTONUP, SDL_CONTROLLERAXISMOTION, etc.
+
+TODO -verify: this
+
+> Here's a simple example (adapted from common examples):
+
+https://github.com/usbong/blue-sapphire-galaxy-java-nogl/blob/main/inputTestSDL.cpp; last accessed: 20250716
+
 # Test XBOX360 Controller
 
 https://github.com/usbong/blue-sapphire-galaxy-java-nogl/blob/main/inputTest.cpp; last accessed: 20250716
