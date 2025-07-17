@@ -15,7 +15,7 @@
  * @company: USBONG
  * @author: SYSON, MICHAEL B.
  * @date created: 20250716
- * @date updated: 20250716
+ * @date updated: 20250717; from 20250716
  * @website: http://www.usbong.ph
  *
  * Reference:
@@ -23,13 +23,9 @@
  * last accessed: 20250715; from 20200424
  * 
  * 2) Google: "SDL_PollEvent controller"; AI Overview
+ * 3) Google: "sdl controller axis left x continuously moving"; AI Overview
  *
  */
-
-//TODO: -reverify: this
-
-//edited by Mike, 20250716
-//#include <SDL.h>
 
 //reference: pagongHalang
 #ifdef _WIN32 //Windows machine
@@ -57,24 +53,38 @@ int main(int argc, char* argv[]) {
 
   SDL_Event event;
   bool running = true;
+  
+  int dead_zone = 10000; // Example dead zone value, adjust as needed
+  int x_axis_value = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTX);
 
   while (running) {
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
         running = false;
       } else if (event.type == SDL_CONTROLLERBUTTONDOWN) {
-        // Handle controller button presses
+	    // Handle controller button presses
         if (event.cbutton.button == SDL_CONTROLLER_BUTTON_A) {
           // A button was pressed
           //Do something
-        } else if (event.cbutton.button == SDL_CONTROLLER_BUTTON_B) {
-            //B button was pressed
-            //Do something else
+		  printf("BUTTON A was pressed!\n");
+       	} else if (event.cbutton.button == SDL_CONTROLLER_BUTTON_B) {
+          //B button was pressed
+          //Do something else
+	      printf("BUTTON B was pressed!\n");
         }
       } else if (event.type == SDL_CONTROLLERAXISMOTION) {
           //Handle joystick or analog stick movement
           if (event.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX) {
-              //Left stick X axis motion
+               //Left stick X axis motion
+			  
+			   x_axis_value = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTX);
+
+			   if (x_axis_value > -dead_zone && x_axis_value < dead_zone) {
+					x_axis_value = 0; // Treat as center position
+			   }
+			   else {
+			     printf("Left stick X axis motion!\n");
+			   }
           }
       }
     }
@@ -88,8 +98,10 @@ int main(int argc, char* argv[]) {
   if (controller) {
     SDL_GameControllerClose(controller);
   }
+
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
+
   return 0;
 }
