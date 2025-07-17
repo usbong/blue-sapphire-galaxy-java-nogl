@@ -1,3 +1,19 @@
+# How to get gcc to work again on updated macOS?
+
+## Xcode 16.4 too big to install in macOS 12 (Monterey); shall need 20GB+ of storage space;
+
+Found I can install an earlier version of Command Life Tools;
+
+https://developer.apple.com/download/all/?q=command; last accessed: 20250718
+
+> Command Line Tools for Xcode 13
+
+> September 20, 2021
+
+However, SDL_GameController doesn't recognize XBOX 360 controller on macOS at all; 
+
+It seems that there's no driver, unlike in Ubuntu Linux;
+
 # Google: "sdl xinput controller"
 
 > AI Overview
